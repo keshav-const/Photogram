@@ -218,3 +218,79 @@ exports.logout=catchAsync(async(req,res,next)=>{
         message:"Logged Our Successfully",
     });
 });
+
+exports.forgetPassword=catchAsync(async(req,res,next)=>{
+    const{email}=req.body;
+    const user=await User.findOne({email});
+    if(!user){
+        return next(new AppError("No User Found",404))
+    }
+    const otp=generateOtp();
+    const resetExpires=Date.now()+300000;
+    user.resetPasswordOTP=otp;
+    user.resetPasswordOTPExpires=resetExpires;
+
+    await user.save({validateBeforeSave:false});
+    const  htmlTemplate=loadTemplate("otpTemplate.hbs",{
+        title:"Reset Password Otp",
+        username:user.username,
+        otp,
+        message:"Your Password Reset Otp is:",
+    });
+
+    try{
+    await sendEmail({
+        email:user.email,
+        subject:"Password Reset OTP(valid for 5 minutes)",
+        html:htmlTemplate
+        });
+        res.status(200).json({
+            status:"Success",
+            message:"Password Reset OTP sent",
+        });
+    }catch(error){
+        user.resetPasswordOTP=undefined;
+        user.resetPasswordOTPExpires=undefined;
+        await user.save({validateBeforeSave:false});
+        return next(new AppError("There was an error sending the mail. Try Again Later",500));
+    }
+
+});
+
+exports.resetPassword=catchAsync(async(req,res,next)=>{
+    const {email,otp,password,passwordConfirm}=req.body();
+    const user=await User.findOne({email,resetPasswordOTP:otp,resetPasswordOTPExpires:{$gt:Date.now()}});
+    if(!user){
+        return next(new AppError("No user Found.Please Try Again later!",400));
+
+    }
+    user.password=password;
+    user.passwordConfirm=passwordConfirm;
+    user.resetPasswordOTP=undefined;
+    user.resetPasswordOTPExpires=undefined;
+    await user.save();
+    createSendToken(user,200,res,'Password Reset Successfull!');
+
+});
+
+exports.changePassword=catchAsync(async(req,res,next)=>{
+    const {currentPassword,newPassword,newPasswordConfirm}=req.body;
+    const {email}=req.user;
+    const user=await User.findOne({email}).select("+password");
+    if(!user){
+        return next(new AppError("uSER Not found",400));
+
+    }
+    if(!(await user.correctPassword(currentPassword,user.password))){
+        return next(new AppError("Incorrect Current Password",400));
+
+    }
+    if(newPassword!==newPasswordConfirm){
+        return next(new AppError("Password doesn't match",400));
+    }
+    user.password=newPassword;
+    user.passwordConfirm=newPasswordConfirm;
+    await user.save();
+    createSendToken(user,200,res,"Password Changed Successfully!!");
+    
+});
