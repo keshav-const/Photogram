@@ -1,9 +1,10 @@
 //import { Button } from '@/components/ui/button';
-import React from 'react'
+import React from 'react';
+import Home from "@/components/Home/Home";
 const HomePage = () => {
   return (
-    <div >
-     HomePage
+    <div>
+     <Home/>
     </div>
   )
 }
