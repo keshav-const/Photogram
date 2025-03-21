@@ -158,7 +158,7 @@ const Signup = () => {
       if (user) {
         dispatch(setAuthUser(user));
         toast.success(data.message || "Signup successful!");
-        router.push("/");
+        router.push("/auth/verify");
       } else {
         toast.error(data.message || "Signup failed!");
       }
