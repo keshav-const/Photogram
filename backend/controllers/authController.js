@@ -258,7 +258,7 @@ exports.forgetPassword=catchAsync(async(req,res,next)=>{
 });
 
 exports.resetPassword=catchAsync(async(req,res,next)=>{
-    const {email,otp,password,passwordConfirm}=req.body();
+    const {email,otp,password,passwordConfirm}=req.body;
     const user=await User.findOne({email,resetPasswordOTP:otp,resetPasswordOTPExpires:{$gt:Date.now()}});
     if(!user){
         return next(new AppError("No user Found.Please Try Again later!",400));
