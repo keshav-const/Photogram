@@ -4,10 +4,11 @@ const AppError = require("../utils/appError");
 const getDataUri = require("../utils/datauri");
 const { uploadToCloudinary } = require("../utils/cloudinary");
 exports.getProfile=catchAsync(async(req,res,next)=>{
-    const {id}=req.params;
+    let { id } = req.params;
+    id = id.trim();
     const user=await User.findById(id).select("-password -otp -otpExpires -resetPasswordOTP -resetPasswordOTPExpires -passwordConfirm").
     populate({
-        path:'post',
+        path:'posts',
         options:{sort:{createdAt: -1}},
     }).populate({
         path:"savedPosts",
@@ -25,32 +26,64 @@ exports.getProfile=catchAsync(async(req,res,next)=>{
     });
 });
 
-exports.editProfile=catchAsync(async(req,res,next)=>{
-    const userId=req.body.id;
-    const{bio}=req.body;
-    const profilePicture=req.file;
+// exports.editProfile=catchAsync(async(req,res,next)=>{
+//     const userId=req.body.id;
+//     const{bio}=req.body;
+//     const profilePicture=req.file;
+//     let cloudResponse;
+//     if(profilePicture){
+//         const fileUri=getDataUri(profilePicture);
+//         cloudResponse=await uploadToCloudinary(fileUri);
+//     }
+//     const user= await User.findById(userId).select('-password');
+//     if(!user){
+//         return next(new AppError("User Not Found",404));
+//     }
+
+//     if(bio) user.bio=bio;
+//     if(profilePicture) user.profilePicture=cloudResponse.secure_url;
+
+//     await user.save({validateBeforeSave:false});
+//      return res.status(200).json({
+//         status:'success',
+//         message:"Profile Updated",
+//         data:{
+//             user,
+//         },
+//      });
+// });
+exports.editProfile = catchAsync(async (req, res, next) => {
+    const userId = req.user.id; // ✅ Correct: Get user from `req.user`
+    const { bio } = req.body;
+    const profilePicture = req.file;
     let cloudResponse;
-    if(profilePicture){
-        const fileUri=getDataUri(profilePicture);
-        cloudResponse=await uploadToCloudinary(fileUri);
-    }
-    const user= await User.findById(userId).select('-password');
-    if(!user){
-        return next(new AppError("User Not Found",404));
+
+    console.log("Received User ID:", userId); // Debugging
+    console.log("Request Body:", req.body);
+    console.log("Uploaded File:", profilePicture);
+
+    if (profilePicture) {
+        const fileUri = getDataUri(profilePicture);
+        cloudResponse = await uploadToCloudinary(fileUri);
     }
 
-    if(bio) user.bio=bio;
-    if(profilePicture) user.profilePicture=cloudResponse.secure_url;
+    const user = await User.findById(userId).select('-password');
+    if (!user) {
+        return next(new AppError("User Not Found", 404));
+    }
 
-    await user.save({validateBeforeSave:false});
-     return res.status(200).json({
-        status:'success',
-        message:"Profile Updated",
-        data:{
-            user,
-        },
-     });
+    if (bio) user.bio = bio;
+    if (profilePicture) user.profilePicture = cloudResponse.secure_url;
+
+    await user.save({ validateBeforeSave: false });
+
+    return res.status(200).json({
+        status: 'success',
+        message: "Profile Updated",
+        data: { user },
+    });
 });
+
 
 
 exports.suggestedUser=catchAsync(async(req,res,next)=>{

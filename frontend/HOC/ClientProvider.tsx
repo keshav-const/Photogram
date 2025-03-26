@@ -1,5 +1,5 @@
 'use client';
-import store from "@/store/store";
+import {store} from "@/store/store";
 import React, { ReactNode, useEffect, useState } from "react";
 import { Provider } from "react-redux";
 import { Persistor,persistStore } from "redux-persist";
