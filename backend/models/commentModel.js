@@ -10,10 +10,10 @@ const commentSchema=new mongoose.Schema({
         ref:'User',
         required:true,
     },
-    createdAt:{
-        type:Date,
-        default:Date.now(),
-    },
+    // createdAt:{
+    //     type:Date,
+    //     default:Date.now(),
+    // },
 
 },{timestamps:true});
 const Comment=mongoose.model("Comment",commentSchema);

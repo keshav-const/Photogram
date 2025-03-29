@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { link } from "fs";
 import axios from "axios";
 import { BASE_API_URL } from "@/server";
 import { setAuthUser } from "@/store/authSlice";

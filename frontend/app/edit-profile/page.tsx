@@ -19,7 +19,7 @@ const EditProfile=()=>{
     const dispatch=useDispatch();
     const user=useSelector((state:RootState)=>state.auth.user);
     const [selectedImage,setSelectedImage]=useState<string|null>(user?.profilePicture||null);
-    const [bio,setBio]=useState<string>(user?.bio ||"");
+    const [bio,setBio]=useState<string>(user?.bio ? String(user.bio) : "");
     const[currentPassword,setCurrentPassword]=useState("");
     const[newPassword,setNewPassword]=useState("");
     const[newPasswordConfirm,setNewPasswordConfirm]=useState("");

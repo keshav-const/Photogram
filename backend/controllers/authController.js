@@ -103,24 +103,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   //console.log("Response sent successfully!"); // ✅ Debugging log 6
 });
 
-// exports.verifyAccount=catchAsync(async(req,res,next)=>{
-//     const {otp}=req.body;
-//     if(!otp){
-//        return next(new AppError('OTP is erequired for verification',400)); 
-//     }
-//     const user=req.user;
-//     if(user.otp!==otp){
-//         return next(new AppError("Invalid OTP"),400);
-//     }
-//     if(Date.now()>user.otpExpires){
-//         return next(new AppError("OTP has expired.Please request a new OTP",400));
-//     }
-//     user.isVerified=true;
-//     user.otp=undefined;
-//     user.otpExpires=undefined;
-//     await user.save({validateBeforeSave: false});
-//     createSendToken(user,200,res,"Email has been verified");
-// });
+
 exports.verifyAccount = catchAsync(async (req, res, next) => {
     console.log("Received OTP for verification:", req.body.otp); // ✅ Debugging log
     console.log("Authenticated User:", req.user); // ✅ Debugging log

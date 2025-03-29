@@ -23,7 +23,7 @@ const postSlice=createSlice({
             state.posts = state.posts.filter((post) => post._id !== action.payload);
         },
         
-        likeorDislike:(state,action:PayloadAction<{postId:string;userId:string}>)=>{
+        likeorDislike:(state,action:PayloadAction<{postId:string;userId:string;}>)=>{
             const post=state.posts.find((post)=>post._id===action.payload.postId);
             if(post){
                 if(post.likes.includes(action.payload.userId)){
@@ -37,7 +37,17 @@ const postSlice=createSlice({
         addComment:(state,action:PayloadAction<{postId:string,comment:Comment}>)=>{
             const post=state.posts.find((post)=>post._id===action.payload.postId);
             if(post){
-                post.comments.push(action.payload.comment);
+                post.comments.push({
+                    ...action.payload.comment,
+                    user: {
+                        ...action.payload.comment.user,
+                        followers: [],
+                        following: [],
+                        posts: [],
+                        savedPosts: [],
+                        isVerified: false,
+                    },
+                });
             }
         },
 },

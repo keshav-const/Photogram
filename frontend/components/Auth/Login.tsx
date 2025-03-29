@@ -136,7 +136,7 @@ const Login = () => {
           </form>
 
           <h1 className="mt-4 text-lg text-gray-800">
-            Don't have an Account?{" "}
+          Don&apos;t  have an Account?{" "}
             <Link href="/auth/signup">
               <span className="text-blue-800 underline cursor-pointer font-medium">
                 SignUp here

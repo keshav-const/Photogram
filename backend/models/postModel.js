@@ -1,7 +1,7 @@
 const mongoose=require('mongoose');
 
 const postSchema=new mongoose.Schema({
-    captions:{
+    caption:{
         type:String,
         maxlength:[2200,"Caption should be less than 2200 characters"],
         trim:true,
@@ -14,7 +14,7 @@ const postSchema=new mongoose.Schema({
     },
     user:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'user',
+        ref:"User",
         required:[true,'User Id is required'],
     },
     likes:[
@@ -29,10 +29,10 @@ const postSchema=new mongoose.Schema({
             ref:"Comment",
         },
     ],
-    createdAt:{
-        type:Date,
-        default:Date.now(),
-    },
+    // createdAt:{
+    //     type:Date,
+    //     default:Date.now(),
+    // },
 },
 {
     timestamps:true
