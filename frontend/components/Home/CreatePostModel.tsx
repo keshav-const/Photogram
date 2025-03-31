@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import axios from "axios";
 import { handleAuthRequest } from "../utils/apiRequest";
 import { addPost } from "@/store/postSlice";
+import { BASE_API_URL } from "@/server";
 
 type Props = {
     isOpen: boolean;
@@ -73,7 +74,7 @@ const CreatePostModel = ({ isOpen, onClose }: Props) => {
             formData.append("caption", caption);
 
             const response = await axios.post(
-                "http://localhost:8000/api/v1/posts/createPost",
+                `${BASE_API_URL}/posts/createPost`,
                 formData,  
                 {
                     headers: { "Content-Type": "multipart/form-data" },
